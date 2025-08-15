@@ -1,5 +1,8 @@
 # sass-clamp
 
+[![CI](https://github.com/knowledgecode/sass-clamp/actions/workflows/ci.yml/badge.svg)](https://github.com/knowledgecode/sass-clamp/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/sass-clamp)](https://www.npmjs.com/package/sass-clamp)
+
 A responsive CSS clamp() utility for Sass that generates fluid typography and spacing with linear interpolation.
 
 ## Installation
@@ -24,11 +27,13 @@ npm install sass-clamp
 ```
 
 **CLI compilation:**
+
 ```bash
 sass --pkg-importer=node style.scss output.css
 ```
 
 **Vite configuration:**
+
 ```javascript
 // vite.config.js
 import { defineConfig } from 'vite';
@@ -56,6 +61,7 @@ export default defineConfig({
 ```
 
 **CLI compilation:**
+
 ```bash
 # Option 1: Using load-path
 sass --load-path=./node_modules style.scss output.css
@@ -65,6 +71,7 @@ sass style.scss output.css
 ```
 
 **Vite configuration:**
+
 ```javascript
 // vite.config.js
 import { defineConfig } from 'vite';
