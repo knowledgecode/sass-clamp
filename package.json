@@ -1,0 +1,53 @@
+{
+  "name": "sass-clamp",
+  "version": "1.0.0",
+  "description": "Responsive CSS clamp() utility for Sass",
+  "keywords": [
+    "sass",
+    "scss",
+    "css",
+    "clamp",
+    "responsive",
+    "utility",
+    "typography",
+    "viewport"
+  ],
+  "homepage": "https://github.com/knowledgecode/sass-clamp#readme",
+  "bugs": {
+    "url": "https://github.com/knowledgecode/sass-clamp/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/knowledgecode/sass-clamp.git"
+  },
+  "license": "MIT",
+  "author": "KNOWLEDGECODE",
+  "main": "index.scss",
+  "sass": "index.scss",
+  "style": "index.scss",
+  "exports": {
+    ".": {
+      "sass": "./index.scss",
+      "style": "./index.scss"
+    }
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "index.scss"
+  ],
+  "scripts": {
+    "dev": "vite dev",
+    "lint": "stylelint index.scss",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.1",
+    "sass": "^1.90.0",
+    "sass-true": "^9.0.0",
+    "stylelint": "^16.23.1",
+    "stylelint-config-sass-guidelines": "^12.1.0",
+    "vite": "^7.1.2",
+    "vitest": "^3.2.4"
+  }
+}

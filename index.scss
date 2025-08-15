@@ -1,0 +1,95 @@
+// clamp - Responsive CSS clamp() utility
+// Copyright (c) 2025 KNOWLEDGECODE
+// Licensed under MIT (https://opensource.org/licenses/MIT)
+
+@use 'sass:list';
+@use 'sass:math';
+@use 'sass:meta';
+
+$default-base-font-size: 16 !default;
+
+@function _strip-unit($number) {
+  @if meta.type-of($number) == 'number' and not math.is-unitless($number) {
+    @return math.div($number, ($number * 0 + 1));
+  }
+  @return $number;
+}
+
+@function _swap($a, $b) {
+  @return ($b, $a);
+}
+
+@function _px-to-rem($px-value, $base-font-size) {
+  @return math.div($px-value, $base-font-size);
+}
+
+@function _rem-to-px($rem-value, $base-font-size) {
+  @return $rem-value * $base-font-size;
+}
+
+@function _round($number, $digits: 2) {
+  $n: math.pow(10, $digits);
+  @return math.div(math.round($number * $n), $n);
+}
+
+@function fluid($min, $max, $min-vw, $max-vw, $base-font-size: $default-base-font-size) {
+  $min-unit: if(math.is-unitless($min), math.unit($max), math.unit($min));
+  $max-unit: if(math.is-unitless($max), math.unit($min), math.unit($max));
+  $min-vw-unit: if(math.is-unitless($min-vw), math.unit($max-vw), math.unit($min-vw));
+  $max-vw-unit: if(math.is-unitless($max-vw), math.unit($min-vw), math.unit($max-vw));
+
+  @if $min-unit == '' and $max-unit == '' {
+    @error 'Both $min and $max are missing units';
+  }
+  @if $min-unit != $max-unit {
+    @error '$min and $max have different units';
+  }
+  @if $min-unit != 'px' and $min-unit != 'rem' {
+    @error '$min unit is not supported';
+  }
+  @if $min-vw-unit == '' and $max-vw-unit == '' {
+    @error 'Both $min-vw and $max-vw are missing units';
+  }
+  @if $min-vw-unit != 'px' and $min-vw-unit != 'rem' {
+    @error '$min-vw unit is not supported';
+  }
+  @if $max-vw-unit != 'px' and $max-vw-unit != 'rem' {
+    @error '$max-vw unit is not supported';
+  }
+  @if not math.is-unitless($base-font-size) {
+    @error '$base-font-size has a unit';
+  }
+
+  $min-value: _strip-unit($min);
+  $max-value: _strip-unit($max);
+  $min-vw-value: _strip-unit($min-vw);
+  $max-vw-value: _strip-unit($max-vw);
+
+  @if $min-unit == 'px' {
+    $min-vw-value: if($min-vw-unit == 'rem', _rem-to-px($min-vw-value, $base-font-size), $min-vw-value);
+    $max-vw-value: if($max-vw-unit == 'rem', _rem-to-px($max-vw-value, $base-font-size), $max-vw-value);
+  } @else {
+    $min-vw-value: if($min-vw-unit == 'px', _px-to-rem($min-vw-value, $base-font-size), $min-vw-value);
+    $max-vw-value: if($max-vw-unit == 'px', _px-to-rem($max-vw-value, $base-font-size), $max-vw-value);
+  }
+
+  @if $min-value > $max-value {
+    $value: _swap($min-value, $max-value);
+    $min-value: list.nth($value, 1);
+    $max-value: list.nth($value, 2);
+
+    $value: _swap($min-vw-value, $max-vw-value);
+    $min-vw-value: list.nth($value, 1);
+    $max-vw-value: list.nth($value, 2);
+  }
+
+  @if $max-vw-value == $min-vw-value {
+    @error 'Viewport width values cannot be the same ($min-vw and $max-vw)';
+  }
+
+  $slope: _round(math.div($max-value - $min-value, $max-vw-value - $min-vw-value) * 100);
+  $offset: _round($min-value - math.div($slope * $min-vw-value, 100));
+  $unit: $min-unit;
+
+  @return clamp(#{$min-value}#{$unit}, #{$offset}#{$unit} #{if($slope < 0, '-', '+')} #{math.abs($slope)}vw, #{$max-value}#{$unit});
+}
