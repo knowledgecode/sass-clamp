@@ -115,6 +115,43 @@ font-size: clamp.fluid(1rem, 1.5rem, 320px, 1200px);
 // Returns: clamp(1rem, 0.82rem + 0.91vw, 1.5rem)
 ```
 
+### `minmax($min, $max, $min-vw, $max-vw, $base-font-size)`
+
+Generates a responsive max(min()) function with linear interpolation for legacy browser compatibility.
+
+**Parameters:**
+
+- `$min` - Minimum value (px or rem)
+- `$max` - Maximum value (px or rem)
+- `$min-vw` - Minimum viewport width (px or rem)
+- `$max-vw` - Maximum viewport width (px or rem)
+- `$base-font-size` - Base font size for unit conversion (default: 16)
+
+**Returns:**
+
+- CSS max(min()) function as a string
+
+**Example:**
+
+```scss
+font-size: clamp.minmax(1rem, 1.5rem, 320px, 1200px);
+// Returns: max(1rem, min(0.82rem + 0.91vw, 1.5rem))
+```
+
+**Use cases:**
+- Legacy browser support where `clamp()` is not available
+- CSS-in-JS libraries with clamp() parsing issues
+- Progressive enhancement scenarios
+
+```scss
+.heading {
+  // Fallback for older browsers
+  font-size: clamp.minmax(16px, 24px, 320px, 1200px);
+  // Modern browsers
+  font-size: clamp.fluid(16px, 24px, 320px, 1200px);
+}
+```
+
 #### Min/Max Values
 
 - Supports `px` or `rem` units

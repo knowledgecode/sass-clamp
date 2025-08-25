@@ -32,7 +32,7 @@ $default-base-font-size: 16 !default;
   @return math.div(math.round($number * $n), $n);
 }
 
-@function fluid($min, $max, $min-vw, $max-vw, $base-font-size: $default-base-font-size) {
+@function _calculate($min, $max, $min-vw, $max-vw, $base-font-size: $default-base-font-size) {
   $min-unit: if(math.is-unitless($min), math.unit($max), math.unit($min));
   $max-unit: if(math.is-unitless($max), math.unit($min), math.unit($max));
   $min-vw-unit: if(math.is-unitless($min-vw), math.unit($max-vw), math.unit($min-vw));
@@ -91,5 +91,27 @@ $default-base-font-size: 16 !default;
   $offset: _round($min-value - math.div($slope * $min-vw-value, 100));
   $unit: $min-unit;
 
+  @return ($min-value, $max-value, $offset, $slope, $unit);
+}
+
+@function fluid($min, $max, $min-vw, $max-vw, $base-font-size: $default-base-font-size) {
+  $values: _calculate($min, $max, $min-vw, $max-vw, $base-font-size);
+  $min-value: list.nth($values, 1);
+  $max-value: list.nth($values, 2);
+  $offset: list.nth($values, 3);
+  $slope: list.nth($values, 4);
+  $unit: list.nth($values, 5);
+
   @return clamp(#{$min-value}#{$unit}, #{$offset}#{$unit} #{if($slope < 0, '-', '+')} #{math.abs($slope)}vw, #{$max-value}#{$unit});
+}
+
+@function minmax($min, $max, $min-vw, $max-vw, $base-font-size: $default-base-font-size) {
+  $values: _calculate($min, $max, $min-vw, $max-vw, $base-font-size);
+  $min-value: list.nth($values, 1);
+  $max-value: list.nth($values, 2);
+  $offset: list.nth($values, 3);
+  $slope: list.nth($values, 4);
+  $unit: list.nth($values, 5);
+
+  @return max(#{$min-value}#{$unit}, min(#{$offset}#{$unit} #{if($slope < 0, '-', '+')} #{math.abs($slope)}vw, #{$max-value}#{$unit}));
 }
