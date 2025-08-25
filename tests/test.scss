@@ -154,3 +154,157 @@
     );
   }
 }
+
+@include describe('minmax function') {
+  // Normal cases - px units
+  @include it('generates max/min with px units') {
+    @include assert-equal(
+      clamp.minmax(16px, 24px, 320px, 1200px),
+      max(16px, min(13.09px + 0.91vw, 24px)),
+      $inspect: true
+    );
+  }
+
+  @include it('generates max/min with px units (decreasing values)') {
+    @include assert-equal(
+      clamp.minmax(24px, 16px, 320px, 1200px),
+      max(16px, min(26.92px - 0.91vw, 24px)),
+      $inspect: true
+    );
+  }
+
+  // Normal cases - rem units
+  @include it('generates max/min with rem units') {
+    @include assert-equal(
+      clamp.minmax(1rem, 1.5rem, 320px, 1200px),
+      max(1rem, min(0.82rem + 0.91vw, 1.5rem)),
+      $inspect: true
+    );
+  }
+
+  @include it('generates max/min with rem units (all rem)') {
+    @include assert-equal(
+      clamp.minmax(1rem, 1.5rem, 20rem, 75rem),
+      max(1rem, min(0.82rem + 0.91vw, 1.5rem)),
+      $inspect: true
+    );
+  }
+
+  // Unit inference cases
+  @include it('handles min unit inference (px)') {
+    @include assert-equal(
+      clamp.minmax(16px, 24, 320px, 1200px),
+      max(16px, min(13.09px + 0.91vw, 24px)),
+      $inspect: true
+    );
+  }
+
+  @include it('handles max unit inference (px)') {
+    @include assert-equal(
+      clamp.minmax(16, 24px, 320px, 1200px),
+      max(16px, min(13.09px + 0.91vw, 24px)),
+      $inspect: true
+    );
+  }
+
+  @include it('handles min unit inference (rem)') {
+    @include assert-equal(
+      clamp.minmax(1rem, 1.5, 20rem, 75rem),
+      max(1rem, min(0.82rem + 0.91vw, 1.5rem)),
+      $inspect: true
+    );
+  }
+
+  @include it('handles max unit inference (rem)') {
+    @include assert-equal(
+      clamp.minmax(1, 1.5rem, 20rem, 75rem),
+      max(1rem, min(0.82rem + 0.91vw, 1.5rem)),
+      $inspect: true
+    );
+  }
+
+  @include it('handles viewport unit inference (px min-vw)') {
+    @include assert-equal(
+      clamp.minmax(16px, 24px, 320px, 1200),
+      max(16px, min(13.09px + 0.91vw, 24px)),
+      $inspect: true
+    );
+  }
+
+  @include it('handles viewport unit inference (px max-vw)') {
+    @include assert-equal(
+      clamp.minmax(16px, 24px, 320, 1200px),
+      max(16px, min(13.09px + 0.91vw, 24px)),
+      $inspect: true
+    );
+  }
+
+  // Mixed unit cases
+  @include it('handles mixed px/rem viewport units (px values)') {
+    @include assert-equal(
+      clamp.minmax(16px, 24px, 20rem, 75rem),
+      max(16px, min(13.09px + 0.91vw, 24px)),
+      $inspect: true
+    );
+  }
+
+  @include it('handles mixed px/rem viewport units (rem values)') {
+    @include assert-equal(
+      clamp.minmax(1rem, 1.5rem, 320px, 1200px),
+      max(1rem, min(0.82rem + 0.91vw, 1.5rem)),
+      $inspect: true
+    );
+  }
+
+  // Value swapping (automatic reordering)
+  @include it('automatically swaps values when min > max') {
+    @include assert-equal(
+      clamp.minmax(24px, 16px, 320px, 1200px),
+      max(16px, min(26.92px - 0.91vw, 24px)),
+      $inspect: true
+    );
+  }
+
+  @include it('automatically swaps viewport values when min-vw > max-vw') {
+    @include assert-equal(
+      clamp.minmax(16px, 24px, 1200px, 320px),
+      max(16px, min(26.92px - 0.91vw, 24px)),
+      $inspect: true
+    );
+  }
+
+  // Custom base font size
+  @include it('uses custom base font size') {
+    @include assert-equal(
+      clamp.minmax(1rem, 1.5rem, 320px, 1200px, 18),
+      max(1rem, min(0.82rem + 1.02vw, 1.5rem)),
+      $inspect: true
+    );
+  }
+
+  // Edge cases - same values
+  @include it('handles same min and max values') {
+    @include assert-equal(
+      clamp.minmax(16px, 16px, 320px, 1200px),
+      max(16px, min(16px + 0vw, 16px)),
+      $inspect: true
+    );
+  }
+
+  // Zero values
+  @include it('handles zero min value') {
+    @include assert-equal(
+      clamp.minmax(0px, 24px, 320px, 1200px),
+      max(0px, min(-8.74px + 2.73vw, 24px)),
+      $inspect: true
+    );
+  }
+
+  @include it('handles zero viewport values') {
+    @include assert-equal(
+      clamp.minmax(16px, 24px, 0px, 1200px),
+      max(16px, min(16px + 0.67vw, 24px)),
+      $inspect: true
+    );
+  }
+}
